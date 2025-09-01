@@ -2,7 +2,8 @@ import { useState } from 'react';
 import BFP from '../assets/BFPLubao.png';
 import HomePage from '../components/Homepage.jsx';
 import CitizenCharter from '../components/Citizencharter.jsx';
-import ApplicationForm from '../components/ApplicationForm.jsx';
+import BuildingPermitForm from '../components/Building.jsx';
+import OccupancyPermitForm from '../components/Occupancy.jsx';
 import FSICApplicationForm from '../components/FSICApplicationForm.jsx';
 
 function FirePermitSystem({ setIsAuthenticated }) {
@@ -47,8 +48,18 @@ function FirePermitSystem({ setIsAuthenticated }) {
           BFP={BFP}
         />
       )}
-      {currentPage === 'application' && (
-        <ApplicationForm 
+      {currentPage === 'building-permit' && (
+        <BuildingPermitForm 
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          handleLogout={handleLogout}
+          BFP={BFP}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+      )}
+      {currentPage === 'occupancy-permit' && (
+        <OccupancyPermitForm 
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           handleLogout={handleLogout}

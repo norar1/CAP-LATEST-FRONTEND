@@ -46,75 +46,99 @@ function HomePage({ currentPage, setCurrentPage, handleLogout, BFP }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Fire Safety Clearance & Business Permit
+            Fire Safety Permits & Certificates
           </h2>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-            Secure your business operations with our comprehensive fire safety clearance and 
-            business permit services. Ensure compliance with local fire safety regulations.
+            Apply for various fire safety permits and certificates required for building construction, 
+            business operations, and property occupancy compliance.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid lg:grid-cols-3 gap-12 mb-16">
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow">
             <div className="flex items-center mb-6">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mr-6">
-                <div className="text-red-600 text-3xl">🏢</div>
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mr-6">
+                <div className="text-green-600 text-3xl">🏗️</div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Business Permit</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Building Permit</h3>
             </div>
-            <p className="text-gray-600 mb-6 text-lg">Complete fire safety evaluation for your business establishment</p>
+            <p className="text-gray-600 mb-6 text-lg">Fire safety compliance for building construction and renovation</p>
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-4"></span>
-                Fire safety inspection
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-4"></span>
+                Building fire safety evaluation
               </li>
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-4"></span>
-                Compliance certification
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-4"></span>
+                Construction compliance check
               </li>
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-4"></span>
-                Emergency exit evaluation
+                <span className="w-2 h-2 bg-green-500 rounded-full mr-4"></span>
+                Fire prevention system review
               </li>
             </ul>
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow">
             <div className="flex items-center mb-6">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mr-6">
-                <div className="text-orange-600 text-3xl">🛡️</div>
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mr-6">
+                <div className="text-purple-600 text-3xl">🏠</div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Safety Clearance</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Occupancy Permit</h3>
             </div>
-            <p className="text-gray-600 mb-6 text-lg">Official fire safety clearance certificate</p>
+            <p className="text-gray-600 mb-6 text-lg">Certificate for safe building occupancy and use</p>
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-4"></span>
-                Fire prevention measures
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-4"></span>
+                Property safety inspection
               </li>
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-4"></span>
-                Equipment verification
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-4"></span>
+                Occupancy safety verification
               </li>
               <li className="flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-4"></span>
-                Safety protocol assessment
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-4"></span>
+                Fire safety certificate issuance
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow">
+            <div className="flex items-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-6">
+                <div className="text-blue-600 text-3xl">🛡️</div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Fire Safety Inspection Certificate</h3>
+            </div>
+            <p className="text-gray-600 mb-6 text-lg">Comprehensive fire safety inspection and certification</p>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-4"></span>
+                Detailed fire safety assessment
+              </li>
+              <li className="flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-4"></span>
+                Equipment and system verification
+              </li>
+              <li className="flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-4"></span>
+                Safety protocol compliance
               </li>
             </ul>
           </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-12 mb-16 border border-gray-100">
-          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Required Information</h3>
+          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Required Documents & Information</h3>
           <div className="grid md:grid-cols-2 gap-12">
             <div className="space-y-4">
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-4"></span>
-                <span className="text-gray-700">Business establishment owner details</span>
+                <span className="text-gray-700">Property owner identification and details</span>
               </div>
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-4"></span>
-                <span className="text-gray-700">Complete business location address</span>
+                <span className="text-gray-700">Complete property or business address</span>
               </div>
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-red-500 rounded-full mr-4"></span>
@@ -124,33 +148,40 @@ function HomePage({ currentPage, setCurrentPage, handleLogout, BFP }) {
             <div className="space-y-4">
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-orange-500 rounded-full mr-4"></span>
-                <span className="text-gray-700">Official receipt number</span>
+                <span className="text-gray-700">Official receipt number for payments</span>
               </div>
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-orange-500 rounded-full mr-4"></span>
-                <span className="text-gray-700">Evaluation officer assignment</span>
+                <span className="text-gray-700">Building plans or business details</span>
               </div>
               <div className="flex items-center">
                 <span className="w-3 h-3 bg-orange-500 rounded-full mr-4"></span>
-                <span className="text-gray-700">Processing control number</span>
+                <span className="text-gray-700">Application control number</span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="text-center mb-16">
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <h3 className="text-3xl font-bold text-gray-900 mb-8">Apply for Permits</h3>
+          <div className="grid sm:grid-cols-1 lg:grid-cols-3 gap-6">
             <button 
-              onClick={() => setCurrentPage('application')}
-              className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold py-4 px-12 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              onClick={() => setCurrentPage('building-permit')}
+              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              Apply for Business Permit
+              Apply for Building Permit
+            </button>
+            <button 
+              onClick={() => setCurrentPage('occupancy-permit')}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Apply for Occupancy Permit
             </button>
             <button 
               onClick={() => setCurrentPage('fsic-application')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-12 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              Apply for Fire Safety Inspection Certificate
+              Apply for FSIC
             </button>
           </div>
         </div>
@@ -159,17 +190,17 @@ function HomePage({ currentPage, setCurrentPage, handleLogout, BFP }) {
           <div className="bg-white rounded-2xl p-8 shadow-lg text-center border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="text-5xl mb-6">⚡</div>
             <h4 className="text-2xl font-bold text-gray-900 mb-4">Fast Processing</h4>
-            <p className="text-gray-600">Quick turnaround time for permit applications</p>
+            <p className="text-gray-600">Quick turnaround time for all permit applications</p>
           </div>
           <div className="bg-white rounded-2xl p-8 shadow-lg text-center border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="text-5xl mb-6">✅</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-4">Compliant</h4>
-            <p className="text-gray-600">Fully compliant with fire safety regulations</p>
+            <h4 className="text-2xl font-bold text-gray-900 mb-4">Fully Compliant</h4>
+            <p className="text-gray-600">All permits meet local fire safety regulations</p>
           </div>
           <div className="bg-white rounded-2xl p-8 shadow-lg text-center border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="text-5xl mb-6">🔒</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-4">Secure</h4>
-            <p className="text-gray-600">Safe and secure application process</p>
+            <h4 className="text-2xl font-bold text-gray-900 mb-4">Secure Process</h4>
+            <p className="text-gray-600">Safe and secure online application system</p>
           </div>
         </div>
       </div>

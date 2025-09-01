@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import ExcelJS from 'exceljs';
 
-function BusinessPermit({ onUpdateStats }) {
-  const [businesses, setBusinesses] = useState([]);
-  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
+function BuildingPermit({ onUpdateStats }) {
+  const [buildings, setBuildings] = useState([]);
+  const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [formData, setFormData] = useState({
     date_received: '',
     owner_establishment: '',
@@ -14,8 +14,8 @@ function BusinessPermit({ onUpdateStats }) {
     date_released_fsec: '',
     control_no: '',
     status: 'pending',
-    payment_status_business: 'not_paid',
-    last_payment_date_business: ''
+    payment_status: 'not_paid',
+    last_payment_date: ''
   });
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -27,49 +27,45 @@ function BusinessPermit({ onUpdateStats }) {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState({});
 
   useEffect(() => {
-    fetchBusinesses();
+    fetchBuildings();
   }, []);
 
   useEffect(() => {
-    filterBusinesses();
-  }, [businesses, searchQuery, selectedMonth, selectedYear]);
+    filterBuildings();
+  }, [buildings, searchQuery, selectedMonth, selectedYear]);
 
-  const fetchBusinesses = async () => {
+  const fetchBuildings = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/firestation/business/GetPermit');
+      const response = await fetch('http://localhost:3000/api/building/GetPermit');
       const data = await response.json();
       if (data.success && data.permits) {
-        setBusinesses(data.permits);
-      } else if (data.success && data.businesses) {
-        setBusinesses(data.businesses);
+        setBuildings(data.permits);
       } else {
-        setBusinesses([]);
+        setBuildings([]);
       }
     } catch (error) {
-      console.error('Error fetching businesses:', error);
-      setBusinesses([]);
+      console.error('Error fetching buildings:', error);
+      setBuildings([]);
     }
   };
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      fetchBusinesses();
+      fetchBuildings();
       return;
     }
     
     try {
-      const response = await fetch(`http://localhost:3000/api/firestation/business/search?query=${searchQuery}`);
+      const response = await fetch(`http://localhost:3000/api/building/search?query=${searchQuery}`);
       const data = await response.json();
       if (data.success && data.permits) {
-        setBusinesses(data.permits);
-      } else if (data.success && data.businesses) {
-        setBusinesses(data.businesses);
+        setBuildings(data.permits);
       } else {
-        setBusinesses([]);
+        setBuildings([]);
       }
     } catch (error) {
-      console.error('Error searching businesses:', error);
-      setBusinesses([]);
+      console.error('Error searching buildings:', error);
+      setBuildings([]);
     }
   };
 
@@ -80,20 +76,20 @@ function BusinessPermit({ onUpdateStats }) {
     }
   };
 
-  const filterBusinesses = () => {
-    let filtered = [...businesses];
+  const filterBuildings = () => {
+    let filtered = [...buildings];
     
     if (selectedMonth) {
-      filtered = filtered.filter(business => {
-        const date = new Date(business.date_received);
+      filtered = filtered.filter(building => {
+        const date = new Date(building.date_received);
         const month = date.getMonth() + 1;
         return month.toString() === selectedMonth;
       });
     }
     
     if (selectedYear) {
-      filtered = filtered.filter(business => {
-        const date = new Date(business.date_received);
+      filtered = filtered.filter(building => {
+        const date = new Date(building.date_received);
         const year = date.getFullYear();
         return year.toString() === selectedYear;
       });
@@ -101,39 +97,39 @@ function BusinessPermit({ onUpdateStats }) {
     
     filtered.sort((a, b) => new Date(b.date_received) - new Date(a.date_received));
     
-    setFilteredBusinesses(filtered);
+    setFilteredBuildings(filtered);
     setCurrentPage(1);
   };
 
-  const getRowColor = (business) => {
-    if (business.status === 'approved') {
+  const getRowColor = (building) => {
+    if (building.status === 'approved') {
       return 'bg-green-100 hover:bg-green-200';
     }
     
     const currentYear = new Date().getFullYear();
-    const businessPaid = business.payment_status_business === 'paid';
+    const buildingPaid = building.payment_status === 'paid';
     
-    const businessPaymentYear = business.last_payment_date_business 
-      ? new Date(business.last_payment_date_business).getFullYear() 
+    const buildingPaymentYear = building.last_payment_date 
+      ? new Date(building.last_payment_date).getFullYear() 
       : null;
     
-    const businessCurrentYear = businessPaid && businessPaymentYear === currentYear;
+    const buildingCurrentYear = buildingPaid && buildingPaymentYear === currentYear;
     
-    if (businessCurrentYear) {
+    if (buildingCurrentYear) {
       return 'bg-blue-100 hover:bg-blue-200';
     } else {
       return 'bg-red-100 hover:bg-red-200';
     }
   };
 
-  const handlePaymentStatusChange = async (businessId, newStatus) => {
+  const handlePaymentStatusChange = async (buildingId, newStatus) => {
     try {
       const updateData = {
-        payment_status_business: newStatus,
-        last_payment_date_business: newStatus === 'paid' ? new Date().toISOString().split('T')[0] : null
+        payment_status: newStatus,
+        last_payment_date: newStatus === 'paid' ? new Date().toISOString().split('T')[0] : null
       };
 
-      const response = await fetch(`http://localhost:3000/api/firestation/business/UpdateBusinessPaymentStatus/${businessId}`, {
+      const response = await fetch(`http://localhost:3000/api/building/UpdatePaymentStatus/${buildingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +140,7 @@ function BusinessPermit({ onUpdateStats }) {
       const data = await response.json();
       
       if (data.success) {
-        fetchBusinesses();
+        fetchBuildings();
         if (onUpdateStats) {
           onUpdateStats();
         }
@@ -167,7 +163,7 @@ function BusinessPermit({ onUpdateStats }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = `http://localhost:3000/api/firestation/business/UpdatePermit/${editingId}`;
+      const url = `http://localhost:3000/api/building/UpdatePermit/${editingId}`;
       
       const response = await fetch(url, {
         method: 'PUT',
@@ -190,12 +186,12 @@ function BusinessPermit({ onUpdateStats }) {
           date_released_fsec: '',
           control_no: '',
           status: 'pending',
-          payment_status_business: 'not_paid',
-          last_payment_date_business: ''
+          payment_status: 'not_paid',
+          last_payment_date: ''
         });
         setEditingId(null);
         setShowForm(false);
-        fetchBusinesses();
+        fetchBuildings();
         if (onUpdateStats) {
           onUpdateStats();
         }
@@ -205,35 +201,35 @@ function BusinessPermit({ onUpdateStats }) {
     }
   };
 
-  const handleEdit = (business) => {
+  const handleEdit = (building) => {
     setFormData({
-      date_received: business.date_received,
-      owner_establishment: business.owner_establishment,
-      location: business.location,
-      fcode_fee: business.fcode_fee,
-      or_no: business.or_no,
-      evaluated_by: business.evaluated_by,
-      date_released_fsec: business.date_released_fsec,
-      control_no: business.control_no,
-      status: business.status || 'pending',
-      payment_status_business: business.payment_status_business || 'not_paid',
-      last_payment_date_business: business.last_payment_date_business || ''
+      date_received: building.date_received,
+      owner_establishment: building.owner_establishment,
+      location: building.location,
+      fcode_fee: building.fcode_fee,
+      or_no: building.or_no,
+      evaluated_by: building.evaluated_by,
+      date_released_fsec: building.date_released_fsec,
+      control_no: building.control_no,
+      status: building.status || 'pending',
+      payment_status: building.payment_status || 'not_paid',
+      last_payment_date: building.last_payment_date || ''
     });
-    setEditingId(business._id);
+    setEditingId(building._id);
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/firestation/business/DeletePermit/${id}`, {
+        const response = await fetch(`http://localhost:3000/api/building/DeletePermit/${id}`, {
           method: 'DELETE',
         });
         
         const data = await response.json();
         
         if (data.success) {
-          fetchBusinesses();
+          fetchBuildings();
           if (onUpdateStats) {
             onUpdateStats();
           }
@@ -245,8 +241,8 @@ function BusinessPermit({ onUpdateStats }) {
   };
 
   const handleStatusChange = async (id, newStatus) => {
-    const business = businesses.find(b => b._id === id);
-    const confirmMessage = `Are you sure you want to ${newStatus === 'approved' ? 'approve' : newStatus === 'rejected' ? 'reject' : 'set to pending'} the permit for ${business?.owner_establishment}?${newStatus !== 'pending' ? '\n\nAn email notification will be sent to the user.' : ''}`;
+    const building = buildings.find(b => b._id === id);
+    const confirmMessage = `Are you sure you want to ${newStatus === 'approved' ? 'approve' : newStatus === 'rejected' ? 'reject' : 'set to pending'} the permit for ${building?.owner_establishment}?${newStatus !== 'pending' ? '\n\nAn email notification will be sent to the user.' : ''}`;
     
     if (!window.confirm(confirmMessage)) {
       return;
@@ -255,7 +251,7 @@ function BusinessPermit({ onUpdateStats }) {
     setIsUpdatingStatus(prev => ({ ...prev, [id]: true }));
 
     try {
-      const response = await fetch(`http://localhost:3000/api/firestation/business/UpdateStatus/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/building/UpdateStatus/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -268,7 +264,7 @@ function BusinessPermit({ onUpdateStats }) {
       if (data.success) {
         alert(data.message + (newStatus !== 'pending' ? ' Email notification has been sent to the user.' : ''));
         
-        fetchBusinesses();
+        fetchBuildings();
         if (onUpdateStats) {
           onUpdateStats();
         }
@@ -286,14 +282,14 @@ function BusinessPermit({ onUpdateStats }) {
 
   const exportToExcel = async () => {
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Business Permits');
+    const worksheet = workbook.addWorksheet('Building Permits');
     
     let dataToExport = [];
     
     if (selectedMonth === '' && selectedYear === '') {
-      dataToExport = businesses;
+      dataToExport = buildings;
     } else {
-      dataToExport = filteredBusinesses;
+      dataToExport = filteredBuildings;
     }
     
     dataToExport.sort((a, b) => new Date(b.date_received) - new Date(a.date_received));
@@ -308,8 +304,8 @@ function BusinessPermit({ onUpdateStats }) {
       { header: 'Date Released FSEC', key: 'date_released_fsec', width: 18 },
       { header: 'Control No.', key: 'control_no', width: 15 },
       { header: 'Status', key: 'status', width: 12 },
-      { header: 'Business Payment Status', key: 'payment_status_business', width: 20 },
-      { header: 'Business Payment Date', key: 'last_payment_date_business', width: 18 }
+      { header: 'Payment Status', key: 'payment_status', width: 20 },
+      { header: 'Payment Date', key: 'last_payment_date', width: 18 }
     ];
 
     dataToExport.forEach(item => {
@@ -323,8 +319,8 @@ function BusinessPermit({ onUpdateStats }) {
         date_released_fsec: item.date_released_fsec,
         control_no: item.control_no,
         status: item.status || 'pending',
-        payment_status_business: item.payment_status_business === 'paid' ? 'Paid' : 'Not Paid',
-        last_payment_date_business: item.last_payment_date_business || 'N/A'
+        payment_status: item.payment_status === 'paid' ? 'Paid' : 'Not Paid',
+        last_payment_date: item.last_payment_date || 'N/A'
       });
     });
 
@@ -335,15 +331,15 @@ function BusinessPermit({ onUpdateStats }) {
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'Business_Permits_Report.xlsx';
+    anchor.download = 'Building_Permits_Report.xlsx';
     anchor.click();
     window.URL.revokeObjectURL(url);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredBusinesses.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredBusinesses.length / itemsPerPage);
+  const currentItems = filteredBuildings.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredBuildings.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -432,9 +428,9 @@ function BusinessPermit({ onUpdateStats }) {
   };
 
   const getRowSize = () => {
-    if (filteredBusinesses.length > 15) {
+    if (filteredBuildings.length > 15) {
       return 'py-1 text-xs';
-    } else if (filteredBusinesses.length > 8) {
+    } else if (filteredBuildings.length > 8) {
       return 'py-2 text-xs';
     }
     return 'py-2 md:py-3 text-xs md:text-sm';
@@ -447,7 +443,7 @@ function BusinessPermit({ onUpdateStats }) {
       <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg w-full max-w-5xl mx-4 max-h-screen overflow-y-auto">
         <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-2 border-b">
           <h3 className="text-lg md:text-xl font-bold text-blue-700">
-            Update Business Permit
+            Update Building Permit
           </h3>
           <button 
             type="button"
@@ -572,10 +568,10 @@ function BusinessPermit({ onUpdateStats }) {
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1 text-sm">Business Payment Status</label>
+              <label className="block text-gray-700 mb-1 text-sm">Payment Status</label>
               <select
-                name="payment_status_business"
-                value={formData.payment_status_business}
+                name="payment_status"
+                value={formData.payment_status}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded"
               >
@@ -584,13 +580,13 @@ function BusinessPermit({ onUpdateStats }) {
               </select>
             </div>
 
-            {formData.payment_status_business === 'paid' && (
+            {formData.payment_status === 'paid' && (
               <div>
-                <label className="block text-gray-700 mb-1 text-sm">Business Payment Date</label>
+                <label className="block text-gray-700 mb-1 text-sm">Payment Date</label>
                 <input
                   type="date"
-                  name="last_payment_date_business"
-                  value={formData.last_payment_date_business}
+                  name="last_payment_date"
+                  value={formData.last_payment_date}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -612,8 +608,8 @@ function BusinessPermit({ onUpdateStats }) {
                   date_released_fsec: '',
                   control_no: '',
                   status: 'pending',
-                  payment_status_business: 'not_paid',
-                  last_payment_date_business: ''
+                  payment_status: 'not_paid',
+                  last_payment_date: ''
                 });
                 setEditingId(null);
                 setShowForm(false);
@@ -639,7 +635,7 @@ function BusinessPermit({ onUpdateStats }) {
       {showForm && renderForm()}
       <div className="bg-white p-4 md:p-6 rounded-lg shadow">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-4 md:space-y-0">
-          <h3 className="text-lg md:text-xl font-bold text-blue-700">Business Permits</h3>
+          <h3 className="text-lg md:text-xl font-bold text-blue-700">Building Permits</h3>
           
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
             <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="flex w-full md:w-auto">
@@ -718,15 +714,15 @@ function BusinessPermit({ onUpdateStats }) {
                   if (overdueCheckbox) overdueCheckbox.checked = false;
                   
                   const currentYear = new Date().getFullYear();
-                  const paidBusinesses = businesses.filter(business => 
-                    business.payment_status_business === 'paid' && 
-                    business.last_payment_date_business && 
-                    new Date(business.last_payment_date_business).getFullYear() === currentYear
+                  const paidBuildings = buildings.filter(building => 
+                    building.payment_status === 'paid' && 
+                    building.last_payment_date && 
+                    new Date(building.last_payment_date).getFullYear() === currentYear
                   );
-                  setFilteredBusinesses(paidBusinesses);
+                  setFilteredBuildings(paidBuildings);
                   setCurrentPage(1);
                 } else {
-                  filterBusinesses();
+                  filterBuildings();
                 }
               }}
               className="mr-2"
@@ -743,17 +739,17 @@ function BusinessPermit({ onUpdateStats }) {
                   if (paidCheckbox) paidCheckbox.checked = false;
                   
                   const currentYear = new Date().getFullYear();
-                  const overdueBusinesses = businesses.filter(business => 
-                    !business.payment_status_business || 
-                    business.payment_status_business === 'not_paid' || 
-                    (business.payment_status_business === 'paid' && 
-                     business.last_payment_date_business && 
-                     new Date(business.last_payment_date_business).getFullYear() < currentYear)
+                  const overdueBuildings = buildings.filter(building => 
+                    !building.payment_status || 
+                    building.payment_status === 'not_paid' || 
+                    (building.payment_status === 'paid' && 
+                     building.last_payment_date && 
+                     new Date(building.last_payment_date).getFullYear() < currentYear)
                   );
-                  setFilteredBusinesses(overdueBusinesses);
+                  setFilteredBuildings(overdueBuildings);
                   setCurrentPage(1);
                 } else {
-                  filterBusinesses();
+                  filterBuildings();
                 }
               }}
               className="mr-2"
@@ -775,55 +771,55 @@ function BusinessPermit({ onUpdateStats }) {
                 <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-24 md:w-28 border-r border-gray-200">Date Released</th>
                 <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-24 md:w-28 border-r border-gray-200">Control No.</th>
                 <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-20 border-r border-gray-200">Status</th>
-                <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-28 md:w-32 border-r border-gray-200">Business Payment</th>
+                <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-28 md:w-32 border-r border-gray-200">Payment</th>
                 <th className="px-2 md:px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider w-24 md:w-32">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentItems.length > 0 ? (
-                currentItems.map((business, index) => (
-                  <tr key={business._id} className={`border-b border-gray-200 ${getRowColor(business)}`}>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.date_received}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.owner_establishment}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.location}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.fcode_fee}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.or_no}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.evaluated_by}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.date_released_fsec}</td>
-                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{business.control_no}</td>
+                currentItems.map((building, index) => (
+                  <tr key={building._id} className={`border-b border-gray-200 ${getRowColor(building)}`}>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.date_received}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.owner_establishment}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.location}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.fcode_fee}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.or_no}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.evaluated_by}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.date_released_fsec}</td>
+                    <td className={`px-2 md:px-3 ${rowSize} truncate border-r border-gray-200`}>{building.control_no}</td>
                     <td className={`px-2 md:px-3 ${rowSize} border-r border-gray-200`}>
                       <span className={`px-1.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${business.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                          business.status === 'approved' ? 'bg-green-100 text-green-800' : 
+                        ${building.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                          building.status === 'approved' ? 'bg-green-100 text-green-800' : 
                             'bg-red-100 text-red-800'}`}>
-                        {business.status || 'pending'}
+                        {building.status || 'pending'}
                       </span>
                     </td>
                     <td className={`px-2 md:px-3 ${rowSize} border-r border-gray-200`}>
                       <select
-                        value={business.payment_status_business || 'not_paid'}
-                        onChange={(e) => handlePaymentStatusChange(business._id, e.target.value)}
+                        value={building.payment_status || 'not_paid'}
+                        onChange={(e) => handlePaymentStatusChange(building._id, e.target.value)}
                         className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
                       >
                         <option value="not_paid">Not Paid</option>
                         <option value="paid">Paid</option>
                       </select>
-                      {business.last_payment_date_business && (
+                      {building.last_payment_date && (
                         <div className="text-xs text-gray-500 mt-1">
-                          {new Date(business.last_payment_date_business).toLocaleDateString()}
+                          {new Date(building.last_payment_date).toLocaleDateString()}
                         </div>
                       )}
                     </td>
                     <td className={`px-2 md:px-3 ${rowSize}`}>
                       <div className="flex space-x-1">
                         <button
-                          onClick={() => handleEdit(business)}
+                          onClick={() => handleEdit(building)}
                           className="text-blue-600 hover:text-blue-900 text-xs"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(business._id)}
+                          onClick={() => handleDelete(building._id)}
                           className="text-red-600 hover:text-red-900 text-xs"
                         >
                           Delete
@@ -832,18 +828,18 @@ function BusinessPermit({ onUpdateStats }) {
                       
                       <div className="mt-1">
                         <select
-                          value={business.status}
-                          onChange={(e) => handleStatusChange(business._id, e.target.value)}
-                          disabled={isUpdatingStatus[business._id]}
+                          value={building.status}
+                          onChange={(e) => handleStatusChange(building._id, e.target.value)}
+                          disabled={isUpdatingStatus[building._id]}
                           className={`text-xs w-full border border-gray-300 rounded px-1 py-0.5 ${
-                            isUpdatingStatus[business._id] ? 'opacity-50 cursor-not-allowed' : ''
+                            isUpdatingStatus[building._id] ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                         >
                           <option value="pending">Pending</option>
                           <option value="approved">Approved</option>
                           <option value="rejected">Rejected</option>
                         </select>
-                        {isUpdatingStatus[business._id] && (
+                        {isUpdatingStatus[building._id] && (
                           <div className="text-xs text-blue-600 mt-1">Updating...</div>
                         )}
                       </div>
@@ -861,11 +857,11 @@ function BusinessPermit({ onUpdateStats }) {
           </table>
         </div>
         
-        {filteredBusinesses.length > 0 && renderPagination()}
+        {filteredBuildings.length > 0 && renderPagination()}
         
-        {filteredBusinesses.length > 0 && (
+        {filteredBuildings.length > 0 && (
           <div className="mt-2 text-xs text-gray-500 text-right">
-            Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredBusinesses.length)} of {filteredBusinesses.length} records
+            Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredBuildings.length)} of {filteredBuildings.length} records
           </div>
         )}
       </div>
@@ -873,4 +869,4 @@ function BusinessPermit({ onUpdateStats }) {
   );
 }
 
-export default BusinessPermit;
+export default BuildingPermit;

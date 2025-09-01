@@ -22,6 +22,80 @@ class ApiService {
     }
   }
 
+  static async createBuildingPermit(formData) {
+    try {
+      const cleanFcodeFee = parseFloat(formData.fcode_fee.toString().replace(/[₱,\s]/g, ''));
+      const cleanPermitFee = parseFloat(formData.permit_fee.toString().replace(/[₱,\s]/g, ''));
+      
+      const response = await fetch(`${API_BASE_URL}/building/CreatePermit`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({
+          date_received: formData.date_received,
+          owner_establishment: formData.owner_establishment,
+          location: formData.location,
+          fcode_fee: cleanFcodeFee,
+          or_no: formData.or_no,
+          evaluated_by: formData.evaluated_by,
+          date_released_fsec: formData.date_released_fsec,
+          control_no: formData.control_no,
+          permit_fee: cleanPermitFee,
+          validity_period: formData.validity_period,
+          payment_status: formData.payment_status || 'not_paid',
+          last_payment_date: formData.last_payment_date
+        })
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create building permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Create building permit error:', error);
+      throw error;
+    }
+  }
+
+  static async createOccupancyPermit(formData) {
+    try {
+      const cleanFcodeFee = parseFloat(formData.fcode_fee.toString().replace(/[₱,\s]/g, ''));
+      const cleanCertificateFee = parseFloat(formData.certificate_fee.toString().replace(/[₱,\s]/g, ''));
+      
+      const response = await fetch(`${API_BASE_URL}/occupancy/CreatePermit`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({
+          date_received: formData.date_received,
+          owner_establishment: formData.owner_establishment,
+          address: formData.address,
+          fcode_fee: cleanFcodeFee,
+          or_no: formData.or_no,
+          inspected_by: formData.inspected_by,
+          date_released_fsic: formData.date_released_fsic,
+          control_no: formData.control_no,
+          certificate_fee: cleanCertificateFee,
+          inspection_date: formData.inspection_date,
+          payment_status: formData.payment_status || 'not_paid',
+          last_payment_date: formData.last_payment_date
+        })
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create occupancy permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Create occupancy permit error:', error);
+      throw error;
+    }
+  }
+
   static async createBusinessPermit(formData) {
     try {
       const cleanFcodeFee = parseFloat(formData.fcode_fee.toString().replace(/[₱,\s]/g, ''));
@@ -44,12 +118,12 @@ class ApiService {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create permit');
+        throw new Error(result.message || 'Failed to create business permit');
       }
       
       return result;
     } catch (error) {
-      console.error('Create permit error:', error);
+      console.error('Create business permit error:', error);
       throw error;
     }
   }
@@ -97,6 +171,46 @@ class ApiService {
     }
   }
 
+  static async getBuildingPermits() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/building/permits`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch building permits');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Get building permits error:', error);
+      throw error;
+    }
+  }
+
+  static async getOccupancyPermits() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/occupancy/permits`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to fetch occupancy permits');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Get occupancy permits error:', error);
+      throw error;
+    }
+  }
+
   static async getBusinessPermits() {
     try {
       const response = await fetch(`${API_BASE_URL}/firestation/business/permits`, {
@@ -107,12 +221,54 @@ class ApiService {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to fetch permits');
+        throw new Error(result.message || 'Failed to fetch business permits');
       }
       
       return result;
     } catch (error) {
-      console.error('Get permits error:', error);
+      console.error('Get business permits error:', error);
+      throw error;
+    }
+  }
+
+  static async updateBuildingPermit(permitId, updateData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/building/permits/${permitId}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(updateData)
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to update building permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Update building permit error:', error);
+      throw error;
+    }
+  }
+
+  static async updateOccupancyPermit(permitId, updateData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/occupancy/permits/${permitId}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(updateData)
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to update occupancy permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Update occupancy permit error:', error);
       throw error;
     }
   }
@@ -128,12 +284,52 @@ class ApiService {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to update permit');
+        throw new Error(result.message || 'Failed to update business permit');
       }
       
       return result;
     } catch (error) {
-      console.error('Update permit error:', error);
+      console.error('Update business permit error:', error);
+      throw error;
+    }
+  }
+
+  static async deleteBuildingPermit(permitId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/building/permits/${permitId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders()
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to delete building permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Delete building permit error:', error);
+      throw error;
+    }
+  }
+
+  static async deleteOccupancyPermit(permitId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/occupancy/permits/${permitId}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders()
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to delete occupancy permit');
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Delete occupancy permit error:', error);
       throw error;
     }
   }
@@ -148,12 +344,12 @@ class ApiService {
       const result = await response.json();
       
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to delete permit');
+        throw new Error(result.message || 'Failed to delete business permit');
       }
       
       return result;
     } catch (error) {
-      console.error('Delete permit error:', error);
+      console.error('Delete business permit error:', error);
       throw error;
     }
   }
