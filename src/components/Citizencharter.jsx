@@ -1,11 +1,10 @@
 function CitizenCharter({ currentPage, setCurrentPage, handleLogout, BFP }) {
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = '/BFP-Citizens-Charter.pdf';
-    link.download = 'BFP-Citizens-Charter.pdf';
-    document.body.appendChild(link);
+    link.href = 'https://region5.bfp.gov.ph/wp-content/uploads/2022/09/CITIZENS-CHARTER-2022.pdf';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     link.click();
-    document.body.removeChild(link);
   };
 
   return (
@@ -129,13 +128,13 @@ function CitizenCharter({ currentPage, setCurrentPage, handleLogout, BFP }) {
               className="bg-gradient-to-r from-blue-600 to-red-600 hover:from-blue-700 hover:to-red-700 text-white font-bold py-6 px-16 rounded-2xl text-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <span className="flex items-center justify-center space-x-4">
-                <span className="text-2xl">📥</span>
-                <span>Download PDF</span>
+                <span className="text-2xl">🔗</span>
+                <span>Go to Official Charter</span>
               </span>
             </button>
 
             <p className="text-gray-600 mt-6">
-              PDF Size: ~2MB | Compatible with all devices
+              Opens official BFP Region 5 Citizen's Charter PDF
             </p>
           </div>
         </div>
